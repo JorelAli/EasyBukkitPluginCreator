@@ -1,5 +1,8 @@
 package io.github.Skepter;
 
+import io.github.Skepter.Panels.CommandPanel;
+import io.github.Skepter.Panels.WelcomePanel;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
@@ -17,13 +20,18 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 public class MainProgrammingScreen extends JFrame {
 
+	public static void main(String[] args) {
+		new MainProgrammingScreen();
+	}
+
 	private static final long serialVersionUID = 6082742900544647505L;
 	private JPanel contentPane;
+	private JScrollPane rightPane;
 
 	private static JList<String> commands;
 	private static Map<String, String> commandMap;
@@ -42,7 +50,7 @@ public class MainProgrammingScreen extends JFrame {
 		setBounds(100, 100, 450, 300);
 
 		/* Menu bar */
-		
+
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
 
@@ -82,27 +90,20 @@ public class MainProgrammingScreen extends JFrame {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 
+		/* Start of main GUI screen */
+		
+		rightPane = new JScrollPane(new WelcomePanel());
+
 		commands = new JList<String>(new DefaultListModel<String>());
-		commands.addListSelectionListener(new ListSelectionListener() {
+		commands.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent event) {
-				if (event.getSource() instanceof JList) {
-					JList<String> list = (JList<String>) event.getSource();
-					list.getSelectedIndex();
-					//JPanel from different class will have an update method
-					//which will load from the commandMap + the selected index,
-					//make a link between the two and show the data
-					
-					//in the update method, make sure to dispose the current JPanel
-					//in order to replace it with a new one
-				}
+				rightPane.setViewportView(new CommandPanel(commands.getSelectedValue()));
 			}
 		});
 
 		JScrollPane pane = new JScrollPane(commands);
-		//JPanel will be in a different class
-		JScrollPane pane2 = new JScrollPane(new JPanel());
 
-		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, pane, pane2);
+		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, pane, rightPane);
 		splitPane.setContinuousLayout(true);
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(gl_contentPane.createParallelGroup(Alignment.LEADING).addComponent(splitPane, GroupLayout.DEFAULT_SIZE, 432, Short.MAX_VALUE));
