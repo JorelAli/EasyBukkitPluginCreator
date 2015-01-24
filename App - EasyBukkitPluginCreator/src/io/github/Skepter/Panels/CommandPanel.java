@@ -19,7 +19,7 @@ public class CommandPanel extends JPanel {
 		JButton deleteButton = new JButton("Delete");
 		deleteButton.setIcon(new ImageIcon(CommandPanel.class.getResource("/io/github/Skepter/icons/Delete.png")));
 
-		JLabel commandNameLabel = new JLabel("Command name:");
+		JLabel commandNameLabel = new JLabel("Command syntax:");
 
 		commandName = new JTextField(command);
 		commandName.setColumns(10);

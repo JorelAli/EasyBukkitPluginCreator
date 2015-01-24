@@ -71,7 +71,17 @@ public class MainProgrammingScreen extends JFrame {
 				fc.setFileFilter(new FileNameExtensionFilter("EasyBukkitPluginCreator data file (.ebpc)", "ebpc"));
 				if(fc.showSaveDialog(instance) == JFileChooser.APPROVE_OPTION) {
 					File file = fc.getSelectedFile();
+					String filePath = file.getAbsolutePath();
+					if(!filePath.endsWith(".ebpc")) {
+					    file = new File(filePath + ".ebpc");
+					}
 					try {
+						/* DO NOT save the view
+						 * Save the key points:
+						 * How many actions
+						 * name + syntax of command...
+						 * store it in some yaml file
+						 * and then parse it.... or something */
 						SaveLoadHandler.save(rightPane.getViewport().getView(), file);
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -148,7 +158,7 @@ public class MainProgrammingScreen extends JFrame {
 				 * Look for existing command components in a HashMap first,
 				 * if there isn't one, load a new one with the new CommandPanel
 				 */
-				rightPane.setViewportView(new CommandPanel(commands.getSelectedValue()));
+				rightPane.setViewportView(new CommandPanel(commandMap.get(commands.getSelectedValue())));
 			}
 		});
 
@@ -162,9 +172,9 @@ public class MainProgrammingScreen extends JFrame {
 		contentPane.setLayout(gl_contentPane);
 	}
 
-	public static void addCommand(String command, String description) {
+	public static void addCommand(String command, String description, String syntax) {
 		DefaultListModel<String> model = (DefaultListModel<String>) commands.getModel();
 		model.addElement(command);
-		commandMap.put(command, description);
+		commandMap.put(command, syntax);
 	}
 }
