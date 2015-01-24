@@ -1,14 +1,23 @@
 package io.github.Skepter.Panels;
 
+import java.awt.BorderLayout;
+
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 
 public class WelcomePanel extends JPanel {
 
-	private static final long serialVersionUID = 2868310667416187752L;
+	private static final long serialVersionUID = 4112252746239799449L;
 
-	/** Create the panel. */
 	public WelcomePanel() {
-		//will show a UI showing how to use + a welcome message. Similar to the eclipse welcome ui
+		setLayout(new BorderLayout(0, 0));
+		
+		JLabel welcomeText = new JLabel("<html><center>Welcome :D</center></html>");
+		add(welcomeText, BorderLayout.CENTER);
+		welcomeText.setHorizontalAlignment(SwingConstants.CENTER);
+		
+
 	}
 
 }

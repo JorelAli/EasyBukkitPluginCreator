@@ -36,10 +36,15 @@ public class SplashScreen extends JDialog {
 		try {
 			UIManager.setLookAndFeel(WebLookAndFeel.class.getCanonicalName());
 			WebLookAndFeel.initializeManagers();
-			SplashScreen dialog = new SplashScreen();
-			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			dialog.setVisible(true);
-			initUI(dialog);
+			if (showSplash) {
+				SplashScreen dialog = new SplashScreen();
+				dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+				dialog.setVisible(true);
+				initUI(dialog);
+			} else {
+				new InitDialog();
+			}
+			new Test();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -89,11 +94,9 @@ public class SplashScreen extends JDialog {
 		SwingWorker<Void, Integer> worker = new SwingWorker<Void, Integer>() {
 			@Override
 			protected Void doInBackground() throws Exception {
-				if (showSplash) {
-					for (int i = 0; i < 100; i++) {
-						Thread.sleep(50);
-						publish(i);
-					}
+				for (int i = 0; i < 100; i++) {
+					Thread.sleep(50);
+					publish(i);
 				}
 				return null;
 			}

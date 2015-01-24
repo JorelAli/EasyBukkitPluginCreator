@@ -1,5 +1,7 @@
 package io.github.Skepter.Panels;
 
+import io.github.Skepter.Data.Command;
+
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -14,14 +16,14 @@ public class CommandPanel extends JPanel {
 	private JTextField commandName;
 
 	/** Create the panel. */
-	public CommandPanel(String command) {
+	public CommandPanel(Command command) {
 
 		JButton deleteButton = new JButton("Delete");
 		deleteButton.setIcon(new ImageIcon(CommandPanel.class.getResource("/io/github/Skepter/icons/Delete.png")));
 
 		JLabel commandNameLabel = new JLabel("Command syntax:");
 
-		commandName = new JTextField(command);
+		commandName = new JTextField(command.getSyntax());
 		commandName.setColumns(10);
 		setLayout(new MigLayout("", "[80px][239px][83px]", "[25px]"));
 		add(commandNameLabel, "cell 0 0,alignx left,aligny center");

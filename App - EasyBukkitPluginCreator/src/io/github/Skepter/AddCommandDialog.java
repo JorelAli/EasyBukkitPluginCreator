@@ -110,7 +110,7 @@ public class AddCommandDialog extends JDialog implements ActionListener {
 				argumentValue = "{WORLD}";
 				break;
 			}
-			commandSyntax.setText(commandSyntax.getText() + " " + argumentValue);
+			commandSyntax.setText(commandSyntax.getText().trim() + " " + argumentValue);
 			return;
 		case "Add":
 			MainProgrammingScreen.addCommand(commandName.getText(), commandDescription.getText(), commandSyntax.getText());

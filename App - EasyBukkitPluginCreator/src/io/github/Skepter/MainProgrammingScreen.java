@@ -1,5 +1,7 @@
 package io.github.Skepter;
 
+import io.github.Skepter.Builder.PluginYAMLBuilder;
+import io.github.Skepter.Data.Command;
 import io.github.Skepter.Panels.CommandPanel;
 import io.github.Skepter.Panels.WelcomePanel;
 import io.github.Skepter.Utils.SaveLoadHandler;
@@ -10,10 +12,12 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.swing.DefaultListModel;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JList;
@@ -35,23 +39,23 @@ public class MainProgrammingScreen extends JFrame {
 	private JScrollPane rightPane;
 
 	private static JList<String> commands;
-	private static Map<String, String> commandMap;
+	private static Map<String, Command> commandMap;
 
 	public static JFrame instance;
-	
+
 	/** Create the frame. */
-	public MainProgrammingScreen() {
+	public MainProgrammingScreen(final String name, final String description, final String version, final String website, final String author) {
 
 		/* Variable initialisation */
 
 		instance = this;
-		commandMap = new HashMap<String, String>();
+		commandMap = new HashMap<String, Command>();
 
 		/* Everything else */
 
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 875, 475);
 
 		/* Menu bar */
 
@@ -60,8 +64,9 @@ public class MainProgrammingScreen extends JFrame {
 
 		JMenu fileMenu = new JMenu("File");
 		menuBar.add(fileMenu);
-		
+
 		JMenuItem saveButton = new JMenuItem("Save plugin");
+		saveButton.setIcon(new ImageIcon(MainProgrammingScreen.class.getResource("/io/github/Skepter/icons/Save.png")));
 		saveButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				JFileChooser fc = new JFileChooser();
@@ -69,11 +74,11 @@ public class MainProgrammingScreen extends JFrame {
 				fc.setAcceptAllFileFilterUsed(false);
 				fc.setMultiSelectionEnabled(false);
 				fc.setFileFilter(new FileNameExtensionFilter("EasyBukkitPluginCreator data file (.ebpc)", "ebpc"));
-				if(fc.showSaveDialog(instance) == JFileChooser.APPROVE_OPTION) {
+				if (fc.showSaveDialog(instance) == JFileChooser.APPROVE_OPTION) {
 					File file = fc.getSelectedFile();
 					String filePath = file.getAbsolutePath();
-					if(!filePath.endsWith(".ebpc")) {
-					    file = new File(filePath + ".ebpc");
+					if (!filePath.endsWith(".ebpc")) {
+						file = new File(filePath + ".ebpc");
 					}
 					try {
 						/* DO NOT save the view
@@ -90,8 +95,9 @@ public class MainProgrammingScreen extends JFrame {
 			}
 		});
 		fileMenu.add(saveButton);
-		
+
 		JMenuItem openButton = new JMenuItem("Open plugin");
+		openButton.setIcon(new ImageIcon(MainProgrammingScreen.class.getResource("/io/github/Skepter/icons/Load.png")));
 		openButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				JFileChooser fc = new JFileChooser();
@@ -99,11 +105,11 @@ public class MainProgrammingScreen extends JFrame {
 				fc.setAcceptAllFileFilterUsed(false);
 				fc.setMultiSelectionEnabled(false);
 				fc.setFileFilter(new FileNameExtensionFilter("EasyBukkitPluginCreator data file (.ebpc)", "ebpc"));
-				if(fc.showSaveDialog(instance) == JFileChooser.APPROVE_OPTION) {
+				if (fc.showSaveDialog(instance) == JFileChooser.APPROVE_OPTION) {
 					File file = fc.getSelectedFile();
 					try {
 						Object o = SaveLoadHandler.load(file);
-						if(o instanceof Component) {
+						if (o instanceof Component) {
 							rightPane.setViewportView((Component) o);
 						}
 					} catch (Exception e) {
@@ -113,11 +119,22 @@ public class MainProgrammingScreen extends JFrame {
 			}
 		});
 		fileMenu.add(openButton);
+		
+		JMenuItem mntmNewMenuItem = new JMenuItem("Return to home");
+		mntmNewMenuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new InitDialog();
+				dispose();
+			}
+		});
+		mntmNewMenuItem.setIcon(new ImageIcon(MainProgrammingScreen.class.getResource("/io/github/Skepter/icons/Exit.png")));
+		fileMenu.add(mntmNewMenuItem);
 
 		JMenu addFeatureMenu = new JMenu("Add Feature");
 		menuBar.add(addFeatureMenu);
 
 		JMenuItem addCommandButton = new JMenuItem("Add new command");
+		addCommandButton.setIcon(new ImageIcon(MainProgrammingScreen.class.getResource("/io/github/Skepter/icons/application_xp_terminal.png")));
 		addCommandButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				new AddCommandDialog();
@@ -131,15 +148,36 @@ public class MainProgrammingScreen extends JFrame {
 		addFeatureMenu.add(addCommandButton);
 
 		JMenuItem addEventButton = new JMenuItem("Add new event");
+		addEventButton.setIcon(new ImageIcon(MainProgrammingScreen.class.getResource("/io/github/Skepter/icons/Script.png")));
 		addFeatureMenu.add(addEventButton);
 
 		JMenu advancedMenu = new JMenu("Advanced");
 		menuBar.add(advancedMenu);
 
 		JMenuItem seePluginButton = new JMenuItem("Show generated plugin.yml file");
+		seePluginButton.setIcon(new ImageIcon(MainProgrammingScreen.class.getResource("/io/github/Skepter/icons/List.png")));
+		seePluginButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				PluginYAMLBuilder builder = new PluginYAMLBuilder();
+				builder.setName(name);
+				builder.setDescription(description);
+				builder.setVersion(version);
+				builder.setWebsite(website);
+				builder.setAuthor(author);
+
+				for (Entry<String, Command> entry : commandMap.entrySet()) {
+					builder.addCommand(entry.getValue());
+				}
+
+				
+				//show generated Plugin.YML file
+				new PluginYAML(builder.getGeneratedYAML());
+			}
+		});
 		advancedMenu.add(seePluginButton);
 
 		JMenuItem editConfigButton = new JMenuItem("Modify config.yml file");
+		editConfigButton.setIcon(new ImageIcon(MainProgrammingScreen.class.getResource("/io/github/Skepter/icons/Notes.png")));
 		//Toggle enabled or disabled based on if the plugin requires a config.yml file or not
 		advancedMenu.add(editConfigButton);
 
@@ -148,7 +186,8 @@ public class MainProgrammingScreen extends JFrame {
 		setContentPane(contentPane);
 
 		/* Start of main GUI screen */
-		
+
+		//SystemColor.textHighlight.brighter(), SystemColor.textHighlight.darker()
 		rightPane = new JScrollPane(new WelcomePanel());
 
 		commands = new JList<String>(new DefaultListModel<String>());
@@ -175,6 +214,6 @@ public class MainProgrammingScreen extends JFrame {
 	public static void addCommand(String command, String description, String syntax) {
 		DefaultListModel<String> model = (DefaultListModel<String>) commands.getModel();
 		model.addElement(command);
-		commandMap.put(command, syntax);
+		commandMap.put(command, new Command(command, description, syntax));
 	}
 }

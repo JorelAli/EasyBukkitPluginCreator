@@ -44,7 +44,8 @@ public class InitDialog extends JFrame {
 		JButton btnNewButton = new JButton("Create a new plugin");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				new MainProgrammingScreen();
+				new PluginInformation();
+				dispose();
 			}
 		});
 		btnNewButton.setFont(new Font("Tahoma", Font.PLAIN, 16));
