@@ -1,6 +1,7 @@
 package io.github.Skepter;
 
 import io.github.Skepter.Builder.PluginYAMLBuilder;
+import io.github.Skepter.Data.Action;
 import io.github.Skepter.Data.Command;
 import io.github.Skepter.Panels.CommandPanel;
 import io.github.Skepter.Panels.WelcomePanel;
@@ -11,6 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -38,10 +40,27 @@ public class MainProgrammingScreen extends JFrame {
 	private JPanel contentPane;
 	private JScrollPane rightPane;
 
-	private static JList<String> commands;
-	private static Map<String, Command> commandMap;
+	private JList<String> commands;
+	private Map<String, Command> commandMap;
+	private Map<Command, List<Action>> commandActionMap;
 
-	public static JFrame instance;
+	private static MainProgrammingScreen instance;
+
+	public JList<String> getCommands() {
+		return commands;
+	}
+
+	public Map<Command, List<Action>> getCommandActionMap() {
+		return commandActionMap;
+	}
+
+	public Map<String, Command> getCommandMap() {
+		return commandMap;
+	}
+
+	public static MainProgrammingScreen getInstance() {
+		return instance;
+	}
 
 	/** Create the frame. */
 	public MainProgrammingScreen(final String name, final String description, final String version, final String website, final String author) {
@@ -119,7 +138,7 @@ public class MainProgrammingScreen extends JFrame {
 			}
 		});
 		fileMenu.add(openButton);
-		
+
 		JMenuItem mntmNewMenuItem = new JMenuItem("Return to home");
 		mntmNewMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -169,7 +188,6 @@ public class MainProgrammingScreen extends JFrame {
 					builder.addCommand(entry.getValue());
 				}
 
-				
 				//show generated Plugin.YML file
 				new PluginYAML(builder.getGeneratedYAML());
 			}
@@ -212,8 +230,8 @@ public class MainProgrammingScreen extends JFrame {
 	}
 
 	public static void addCommand(String command, String description, String syntax) {
-		DefaultListModel<String> model = (DefaultListModel<String>) commands.getModel();
+		DefaultListModel<String> model = (DefaultListModel<String>) MainProgrammingScreen.getInstance().getCommands().getModel();
 		model.addElement(command);
-		commandMap.put(command, new Command(command, description, syntax));
+		MainProgrammingScreen.getInstance().getCommandMap().put(command, new Command(command, description, syntax));
 	}
 }
